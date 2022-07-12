@@ -40,6 +40,9 @@ public class PessoaJuridicaEntity extends PanacheEntityBase {
     @JoinColumn(name = "id_endereco")
     private EnderecoEntity endereco;
 
+    @ManyToOne
+    @JoinColumn(name = "id_porte_empresarial")
+    private PorteEmpresarialEntity porteEmpresarial;
 
 
 }
