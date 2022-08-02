@@ -1,5 +1,6 @@
 package br.com.macedo.sistemas.controller;
 
+import br.com.macedo.sistemas.domain.dto.ListagemBandeiraCartaoDto;
 import br.com.macedo.sistemas.service.BandeiraCartaoService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -27,7 +28,7 @@ public class BandeiraCartaoResource {
     @Path("/")
     @Operation(summary = "Lista Bandeiras", description = "Lista Bandeiras")
     public Response listaBandeiras() {
-        List<String> bandeiras = bandeiraCartaoService.listaBandeiras();
+        List<ListagemBandeiraCartaoDto> bandeiras = bandeiraCartaoService.listaBandeiras();
 
         return Response.status(Response.Status.OK).entity(bandeiras).build();
     }

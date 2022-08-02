@@ -1,16 +1,16 @@
 package br.com.macedo.sistemas.domain.dto;
 
-import br.com.macedo.sistemas.domain.aggregate.TipoEnderecoEntity;
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 import java.io.Serializable;
 
-@Data
+@AllArgsConstructor
+@Getter
 public class EnderecoEntityDto implements Serializable {
-    private String logradouro;
-    private String numero;
-    private String cep;
-    private String bairro;
-    private String complemento;
-    private TipoEnderecoEntity tipoEndereco;
+    private final LogradouroEntityDto logradouro;
+    private final String numero;
+    private final String cep;
+    private final String complemento;
+    private final BairroEntityDto bairro;
 }

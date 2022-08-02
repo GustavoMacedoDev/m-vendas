@@ -1,6 +1,7 @@
 package br.com.macedo.sistemas.service;
 
 import br.com.macedo.sistemas.domain.aggregate.BandeiraCartaoEntity;
+import br.com.macedo.sistemas.domain.dto.ListagemBandeiraCartaoDto;
 
 import javax.enterprise.context.ApplicationScoped;
 import java.util.ArrayList;
@@ -10,13 +11,14 @@ import java.util.List;
 public class BandeiraCartaoService {
 
 
-    public List<String> listaBandeiras() {
+    public List<ListagemBandeiraCartaoDto> listaBandeiras() {
         List<BandeiraCartaoEntity> listaBandeiras = BandeiraCartaoEntity.listAll();
 
-        List<String> bandeiras = new ArrayList<>();
+        List<ListagemBandeiraCartaoDto> bandeiras = new ArrayList<>();
         for(BandeiraCartaoEntity bandeiraCartaoEntity : listaBandeiras) {
-            bandeiras.add(bandeiraCartaoEntity.getNomeBandeiraCartao());
+            ListagemBandeiraCartaoDto bandeiraCartaoDto =  new ListagemBandeiraCartaoDto(bandeiraCartaoEntity);
 
+            bandeiras.add(bandeiraCartaoDto);
         }
 
 

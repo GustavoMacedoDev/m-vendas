@@ -45,7 +45,7 @@ public class PessoaJuridicaService {
         }
 
         for(PessoaJuridicaEntity pessoaJuridica :  listaPJ) {
-            ListaPessoaJuridicaDto listaPessoaJuridicaDto = new ListaPessoaJuridicaDto(pessoaJuridica);
+            var listaPessoaJuridicaDto = new ListaPessoaJuridicaDto(pessoaJuridica);
 
             listaPJResponse.add(listaPessoaJuridicaDto);
         }
@@ -53,18 +53,18 @@ public class PessoaJuridicaService {
         return listaPJResponse;
     }
 
-    @Transactional
-    public MensagemResposta validaCadastroPessoaJuridica(CadastraPessoaJuridicaDto cadastraPessoaJuridicaDto) {
-        validaTipoEndereco(cadastraPessoaJuridicaDto.getEndereco().getTipoEndereco());
-
-        validaPessoaJuridica(cadastraPessoaJuridicaDto);
-
-        EnderecoEntity enderecoEntity = enderecoService.cadastraEndereco(cadastraPessoaJuridicaDto.getEndereco());
-
-        PessoaJuridicaEntity pessoaJuridicaEntity = cadastraPessoaJuridica(cadastraPessoaJuridicaDto, enderecoEntity);
-
-        return new MensagemResposta(pessoaJuridicaEntity.getIdPessoaJuridica(), "Pessoa Cadastrada");
-    }
+//    @Transactional
+//    public MensagemResposta validaCadastroPessoaJuridica(CadastraPessoaJuridicaDto cadastraPessoaJuridicaDto) {
+//       // validaTipoEndereco(cadastraPessoaJuridicaDto.getEnderecoDto().getTipoEndereco());
+//
+//        validaPessoaJuridica(cadastraPessoaJuridicaDto);
+//
+//        //EnderecoEntity enderecoEntity = enderecoService.cadastraEndereco(cadastraPessoaJuridicaDto.getEnderecoDto());
+//
+//        PessoaJuridicaEntity pessoaJuridicaEntity = cadastraPessoaJuridica(cadastraPessoaJuridicaDto, enderecoEntity);
+//
+//        return new MensagemResposta(pessoaJuridicaEntity.getIdPessoaJuridica(), "Pessoa Cadastrada");
+//    }
 
     @Transactional
     private PessoaJuridicaEntity cadastraPessoaJuridica(CadastraPessoaJuridicaDto cadastraPessoaJuridicaDto,

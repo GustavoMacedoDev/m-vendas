@@ -105,7 +105,7 @@ public class TipoEnderecoService {
         if (listaEnderecos.isEmpty()) {
             TipoEnderecoEntity.deleteById(codigoTipoEndereco);
         } else {
-            throw new ErroCadastralException("O Tipo de Endereço possui vinculo com endereços " + listaEnderecos.toString());
+            throw new ErroCadastralException("O Tipo de Endereço possui vinculo com endereços " + listaEnderecos);
         }
 
         return new MensagemResposta(codigoTipoEndereco, "Tipo deletado com sucesso");

@@ -7,6 +7,7 @@ import br.com.macedo.sistemas.service.PessoaJuridicaService;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 
+import javax.annotation.security.RolesAllowed;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -32,6 +33,7 @@ public class PessoaJuridicaResource {
 
     @GET
     @Path("/")
+    @RolesAllowed("Funcionario")
     @Operation(summary = "Lista todas as pessoas jurídicas", description = "Lista todos Pessoas Jurídicas")
     public Response listarPessoaJuridica() {
 
@@ -44,10 +46,12 @@ public class PessoaJuridicaResource {
     @Path("/")
     @Operation(summary = "Cadastro de Pessoa Jurídica", description = "Cadastro de Pessoa Jurídica")
     public Response cadastraPessoaJuridica(@Valid @NotNull(message = "A requisição não pode ser nula")
-                                           CadastraPessoaJuridicaDto cadastraPessoaJuridicaDto) {
+                                                   CadastraPessoaJuridicaDto cadastraPessoaJuridicaDto) {
 
-        MensagemResposta mensagemResposta = pjService.validaCadastroPessoaJuridica(cadastraPessoaJuridicaDto);
+        //MensagemResposta mensagemResposta = pjService.validaCadastroPessoaJuridica(cadastraPessoaJuridicaDto);
 
-        return Response.status(Response.Status.CREATED).entity(mensagemResposta).build();
+        //return Response.status(Response.Status.CREATED).entity(mensagemResposta).build();
+
+        return null;
     }
 }

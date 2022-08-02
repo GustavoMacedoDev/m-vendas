@@ -1,11 +1,17 @@
 package br.com.macedo.sistemas.domain.dto;
 
+import br.com.macedo.sistemas.domain.aggregate.BandeiraCartaoEntity;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Data
 public class ListagemBandeiraCartaoDto implements Serializable {
-    private List<String> nomeBandeiraCartao;
+    private final Long idBandeiraCartao;
+    private final String nomeBandeiraCartao;
+
+    public ListagemBandeiraCartaoDto(BandeiraCartaoEntity bandeiraCartao) {
+        this.idBandeiraCartao = bandeiraCartao.getIdBandeiraCartao();
+        this.nomeBandeiraCartao = bandeiraCartao.getNomeBandeiraCartao();
+    }
 }

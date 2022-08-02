@@ -8,9 +8,9 @@ import java.io.Serializable;
 
 @Data
 public class ListagemNaturezaJuridicaDto implements Serializable {
-    private String codigoNaturezaJuridica;
-    private String nomeNaturezaJuridica;
-    private String categoriaJuridica;
+    private final String codigoNaturezaJuridica;
+    private final String nomeNaturezaJuridica;
+    private final String categoriaJuridica;
 
     public ListagemNaturezaJuridicaDto(NaturezaJuridicaEntity naturezaJuridicaEntity) {
         this.codigoNaturezaJuridica = naturezaJuridicaEntity.getCodigoNaturezaJuridica();

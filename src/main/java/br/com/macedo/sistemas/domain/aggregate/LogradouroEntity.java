@@ -1,6 +1,5 @@
 package br.com.macedo.sistemas.domain.aggregate;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,28 +13,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "endereco")
+@Table(name = "logradouro")
 @Getter
 @Setter
-public class EnderecoEntity extends PanacheEntityBase {
+public class LogradouroEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_endereco", nullable = false)
-    private Long idEndereco;
+    @Column(name = "id_logradouro", nullable = false)
+    private Long idLogradouro;
+
+    private String nomeLogradouro;
 
     @ManyToOne
-    private LogradouroEntity logradouroEntity;
-
-    private String numero;
-
-    private String cep;
-
-    private String complemento;
-
-    @ManyToOne
-    @JoinColumn(name = "id_bairro")
-    private BairroEntity bairroEntity;
-
+    @JoinColumn(name = "id_tipo_logradouro")
+    private TipoLogradouroEntity tipoLogradouro;
 
 }

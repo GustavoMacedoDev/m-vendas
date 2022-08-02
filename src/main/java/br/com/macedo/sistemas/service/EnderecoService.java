@@ -1,7 +1,7 @@
 package br.com.macedo.sistemas.service;
 
 import br.com.macedo.sistemas.domain.aggregate.EnderecoEntity;
-import br.com.macedo.sistemas.domain.dto.EnderecoEntityDto;
+import br.com.macedo.sistemas.domain.dto.EnderecoDto;
 import br.com.macedo.sistemas.domain.utils.exceptions.ErroCadastralException;
 import br.com.macedo.sistemas.repository.EnderecoRepository;
 import org.jboss.logging.Logger;
@@ -21,14 +21,14 @@ public class EnderecoService {
     private final static Logger LOGGER = Logger.getLogger(PessoaJuridicaService.class);
 
     @Transactional
-    public EnderecoEntity cadastraEndereco(EnderecoEntityDto enderecoDto) {
+    public EnderecoEntity cadastraEndereco(EnderecoDto enderecoDto) {
         EnderecoEntity enderecoEntity = new EnderecoEntity();
-        enderecoEntity.setNumero(enderecoDto.getNumero());
-        enderecoEntity.setLogradouro(enderecoDto.getLogradouro());
-        enderecoEntity.setBairro(enderecoDto.getBairro());
-        enderecoEntity.setCep(enderecoDto.getCep());
-        enderecoEntity.setComplemento(enderecoDto.getComplemento());
-        enderecoEntity.setTipoEndereco(enderecoDto.getTipoEndereco());
+//        enderecoEntity.setNumero(enderecoDto.getNumero());
+//        enderecoEntity.setLogradouro(enderecoDto.getLogradouro());
+//        enderecoEntity.setBairro(enderecoDto.getBairro());
+//        enderecoEntity.setCep(enderecoDto.getCep());
+//        enderecoEntity.setComplemento(enderecoDto.getComplemento());
+//        enderecoEntity.setTipoEndereco(enderecoDto.getTipoEndereco());
 
         try{
             enderecoEntity.persist();
