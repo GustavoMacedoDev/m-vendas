@@ -2,7 +2,6 @@ package br.com.macedo.sistemas.service;
 
 import br.com.macedo.sistemas.domain.aggregate.HistoricoPrecoEntity;
 import br.com.macedo.sistemas.domain.aggregate.ProdutoEntity;
-import br.com.macedo.sistemas.domain.dto.CadastraProdutoDto;
 import br.com.macedo.sistemas.domain.utils.exceptions.ErroCadastralException;
 import br.com.macedo.sistemas.repository.HistoricoPrecoRepository;
 import org.jboss.logging.Logger;
@@ -12,7 +11,6 @@ import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

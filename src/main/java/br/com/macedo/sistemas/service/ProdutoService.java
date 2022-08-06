@@ -1,16 +1,18 @@
 package br.com.macedo.sistemas.service;
 
+import br.com.macedo.sistemas.domain.aggregate.CategoriaProdutoEntity;
 import br.com.macedo.sistemas.domain.aggregate.HistoricoPrecoEntity;
 import br.com.macedo.sistemas.domain.aggregate.ProdutoEntity;
 import br.com.macedo.sistemas.domain.dto.AlteraDadosProdutoDto;
 import br.com.macedo.sistemas.domain.dto.CadastraProdutoDto;
-import br.com.macedo.sistemas.domain.dto.ListaProdutoHistoricoPrecoDto;
+import br.com.macedo.sistemas.domain.dto.CategoriaProdutoDto;
 import br.com.macedo.sistemas.domain.dto.ListaProdutoPorIdDto;
 import br.com.macedo.sistemas.domain.dto.ListagemHistoricoPrecoDto;
 import br.com.macedo.sistemas.domain.dto.ListagemProdutoDto;
 import br.com.macedo.sistemas.domain.utils.exceptions.ErroCadastralException;
 import br.com.macedo.sistemas.domain.utils.mensagens.MensagemResposta;
 import br.com.macedo.sistemas.repository.ProdutoRepository;
+import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import org.jboss.logging.Logger;
 
 import javax.enterprise.context.ApplicationScoped;
@@ -32,6 +34,9 @@ public class ProdutoService {
     @Inject
     ProdutoRepository produtoRepository;
 
+    @Inject
+    CategoriaService categoriaService;
+
     public List<ListagemProdutoDto> listaProdutos() {
         List<ProdutoEntity> listaProdutos = ProdutoEntity.listAll();
         List<ListagemProdutoDto> listaProdutosResponse = new ArrayList<>();
@@ -40,6 +45,7 @@ public class ProdutoService {
             listagemProdutoDto.setIdProduto(produto.getIdProduto());
             listagemProdutoDto.setNomeProduto(produto.getNomeProduto());
             listagemProdutoDto.setValorAtual(produto.getValorAtual());
+            listagemProdutoDto.setCategorias(produto.getCategoriasVinculadas());
 
             listaProdutosResponse.add(listagemProdutoDto);
         }
@@ -51,15 +57,35 @@ public class ProdutoService {
     public MensagemResposta cadastrarProduto(CadastraProdutoDto cadastraProdutoDto) {
         validaExistenciaProduto(cadastraProdutoDto.getNomeProduto());
 
+
         ProdutoEntity produtoEntity = new ProdutoEntity();
         produtoEntity.setNomeProduto(cadastraProdutoDto.getNomeProduto());
         produtoEntity.setValorAtual(cadastraProdutoDto.getValor());
 
+
+        List<CategoriaProdutoEntity> listaCategorias = new ArrayList<>();
+
+        for(CategoriaProdutoDto categoriaProduto : cadastraProdutoDto.getCategorias()) {
+            CategoriaProdutoEntity categoriaProdutoEntity = new CategoriaProdutoEntity();
+            categoriaProdutoEntity.setCategoria(categoriaService.buscaCategoriaPeloId(categoriaProduto.getIdCategoriaProduto()));
+            categoriaProdutoEntity.setProduto(produtoEntity);
+
+            listaCategorias.add(categoriaProdutoEntity);
+        }
+
+
         try {
-            produtoEntity.persist();
+            produtoEntity.persistAndFlush();
         } catch (PersistenceException e) {
             LOGGER.error(e);
             throw new ErroCadastralException("Erro ao cadastrar produto");
+        }
+
+        try {
+            PanacheEntityBase.persist(listaCategorias);
+        } catch (PersistenceException e) {
+            LOGGER.error(e);
+            throw new ErroCadastralException("Erro ao cadastrar vinculo de categoria");
         }
 
         historicoPrecoService.cadastraHistoricoPreco(cadastraProdutoDto.getValor(), produtoEntity);

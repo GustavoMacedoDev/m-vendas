@@ -2,7 +2,6 @@ package br.com.macedo.sistemas.controller;
 
 import br.com.macedo.sistemas.domain.dto.AlteraDadosProdutoDto;
 import br.com.macedo.sistemas.domain.dto.CadastraProdutoDto;
-import br.com.macedo.sistemas.domain.dto.ListaProdutoHistoricoPrecoDto;
 import br.com.macedo.sistemas.domain.dto.ListaProdutoPorIdDto;
 import br.com.macedo.sistemas.domain.dto.ListagemProdutoDto;
 import br.com.macedo.sistemas.domain.utils.mensagens.MensagemResposta;
