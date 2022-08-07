@@ -14,6 +14,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -25,20 +26,20 @@ import java.util.List;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Path("/categoria_produto")
+@Path("/categorias")
 @ApplicationScoped
 @Produces(APPLICATION_JSON)
 @Tag(name = "Categoria de Produtos")
-public class CategoriaProdutoResource {
+public class CategoriaResource {
 
     @Inject
-    CategoriaService categoriaProdutoService;
+    CategoriaService categoriaService;
 
     @GET
     @Path("")
     @Operation(description = "Lista Categorias", summary = "Lista Categorias")
     public Response listaCategoriasProdutos() {
-        List<ListagemCategoriaProdutoDto> listagemCategoriaProdutoDto = categoriaProdutoService.listaCategorias();
+        List<ListagemCategoriaProdutoDto> listagemCategoriaProdutoDto = categoriaService.listaCategorias();
 
         return Response.status(Response.Status.OK).entity(listagemCategoriaProdutoDto).build();
     }
@@ -48,7 +49,7 @@ public class CategoriaProdutoResource {
     @Operation(description = "Busca categoria pelo Id", summary = "Busca Categoria pelo Id")
     public Response listaCategoriaPeloId(@Parameter(description = "Código da Categoria", required = true)
                                          @PathParam("idCategoriaProduto") Long idCategoria) {
-        DetalhaCategoriaProdutoDto detalhaCategoriaProdutoDto = categoriaProdutoService.listaCategoriaPeloId(idCategoria);
+        DetalhaCategoriaProdutoDto detalhaCategoriaProdutoDto = categoriaService.listaCategoriaPeloId(idCategoria);
 
         return Response.status(Response.Status.OK).entity(detalhaCategoriaProdutoDto).build();
 
@@ -59,7 +60,7 @@ public class CategoriaProdutoResource {
     @Operation(description = "Busca categoria pelo Nome", summary = "Busca Categoria pelo Nome")
     public Response listaCategoriaPeloNome(@Parameter(description = "Nome da Categoria", required = true)
                                          @PathParam("nomeCategoriaProduto") String nomeCategoria) {
-        DetalhaCategoriaProdutoDto detalhaCategoriaProdutoDto = categoriaProdutoService.listaCategoriaPeloNome(nomeCategoria);
+        DetalhaCategoriaProdutoDto detalhaCategoriaProdutoDto = categoriaService.listaCategoriaPeloNome(nomeCategoria);
 
         return Response.status(Response.Status.OK).entity(detalhaCategoriaProdutoDto).build();
 
@@ -69,8 +70,7 @@ public class CategoriaProdutoResource {
     @Path("")
     @Operation(description = "Cadastro de Categoria", summary = "Cadastro de Categoria")
     public Response cadastraNovaCategoria(@NotNull @Valid CadastraCategoriaProdutoDto cadastraCategoriaProdutoDto) {
-        System.out.println(cadastraCategoriaProdutoDto.getNomeCategoriaProduto());
-        MensagemResposta mensagemResposta = categoriaProdutoService.cadastraCategoria(cadastraCategoriaProdutoDto);
+        MensagemResposta mensagemResposta = categoriaService.cadastraCategoria(cadastraCategoriaProdutoDto);
 
         return Response.status(Response.Status.CREATED).entity(mensagemResposta).build();
     }
@@ -82,11 +82,22 @@ public class CategoriaProdutoResource {
                                          @PathParam("idCategoria") Long idCategoria,
                                          @Valid @NotNull(message = "A requisição não pode ser nula")
                                          AlteraDadosCategoriaProdutoDto alteraDadosCategoriaProdutoDto) {
-        MensagemResposta mensagemResposta = categoriaProdutoService.alteraDadosCategoria(idCategoria, alteraDadosCategoriaProdutoDto);
+        MensagemResposta mensagemResposta = categoriaService.alteraDadosCategoria(idCategoria, alteraDadosCategoriaProdutoDto);
 
         return Response.status(Response.Status.OK).entity(mensagemResposta).build();
 
     }
 
+    @DELETE
+    @Path("/{idCategoria}")
+    @Operation(description = "Deleta uma categoria sem vinculos", summary = "Deleta Categoria sem vinculos")
+    public Response deletaCategoria(@Parameter(description = "Código da Categoria", required = true)
+                                    @PathParam("idCategoria") Long idCategoria) {
+
+        MensagemResposta mensagemResposta = categoriaService.deletaCategoria(idCategoria);
+
+        return Response.status(Response.Status.OK).entity(mensagemResposta).build();
+
+    }
 
 }

@@ -2,9 +2,8 @@ package br.com.macedo.sistemas.domain.aggregate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -14,8 +13,6 @@ import java.io.Serializable;
 @Entity
 @Table(name = "categoria_produto")
 @NoArgsConstructor
-@Getter
-@Setter
 public class CategoriaProdutoEntity extends PanacheEntityBase implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -48,6 +45,10 @@ public class CategoriaProdutoEntity extends PanacheEntityBase implements Seriali
         id.setCategoria(categoria);
     }
 
-
-
+    @Override
+    public String toString() {
+        return "CategoriaProdutoEntity{" +
+                "id=" + id.getProduto().getNomeProduto() +
+                '}';
+    }
 }

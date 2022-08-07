@@ -2,17 +2,16 @@ package br.com.macedo.sistemas.domain.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DetalhaCategoriaProdutoDto implements Serializable {
-    private Long idCategoria;
-    private String nomeCategoria;
+public class ProdutoEntityDto implements Serializable {
+    private Long idProduto;
+    private String nomeProduto;
+    private BigDecimal valorAtual;
 }

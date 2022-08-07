@@ -10,16 +10,17 @@ import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 @Embeddable
-@Getter @Setter @EqualsAndHashCode
-public class CategoriaProdutoPk implements Serializable {
+@Getter
+@Setter @EqualsAndHashCode
+public class ItemPedidoPk implements Serializable {
 
-    private static final long serialVersionUID = 5819951708442721771L;
+    private static final long serialVersionUID = 6497323467924958227L;
+
+    @ManyToOne
+    @JoinColumn(name = "pedido_id")
+    private PedidoEntity pedido;
 
     @ManyToOne
     @JoinColumn(name = "produto_id")
     private ProdutoEntity produto;
-
-    @ManyToOne
-    @JoinColumn(name = "categoria_id")
-    private CategoriaEntity categoria;
 }

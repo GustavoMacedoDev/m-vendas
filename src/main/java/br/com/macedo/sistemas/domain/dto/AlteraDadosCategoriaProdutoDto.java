@@ -13,5 +13,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AlteraDadosCategoriaProdutoDto implements Serializable {
-    private String nomeCategoriaProduto;
+    private String nomeCategoria;
 }

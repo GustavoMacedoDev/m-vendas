@@ -1,6 +1,8 @@
 package br.com.macedo.sistemas.service;
 
 import br.com.macedo.sistemas.domain.aggregate.CategoriaEntity;
+import br.com.macedo.sistemas.domain.aggregate.CategoriaProdutoEntity;
+import br.com.macedo.sistemas.domain.aggregate.ProdutoEntity;
 import br.com.macedo.sistemas.domain.dto.AlteraDadosCategoriaProdutoDto;
 import br.com.macedo.sistemas.domain.dto.CadastraCategoriaProdutoDto;
 import br.com.macedo.sistemas.domain.dto.DetalhaCategoriaProdutoDto;
@@ -24,7 +26,10 @@ public class CategoriaService {
     private final static Logger LOGGER = Logger.getLogger(CategoriaEntity.class);
 
     @Inject
-    CategoriaRepository categoriaProdutoRepository;
+    CategoriaRepository categoriaRepository;
+
+    @Inject
+    ProdutoService produtoService;
 
 
     public List<ListagemCategoriaProdutoDto> listaCategorias() {
@@ -33,8 +38,8 @@ public class CategoriaService {
 
         for(CategoriaEntity categoriaProduto : listaCategorias) {
             ListagemCategoriaProdutoDto listagemCategoriaProdutoDto = new ListagemCategoriaProdutoDto();
-            listagemCategoriaProdutoDto.setIdCategoriaProduto(categoriaProduto.getIdCategoria());
-            listagemCategoriaProdutoDto.setNomeCategoriaProduto(categoriaProduto.getNomeCategoria());
+            listagemCategoriaProdutoDto.setIdCategoria(categoriaProduto.getIdCategoria());
+            listagemCategoriaProdutoDto.setNomeCategoria(categoriaProduto.getNomeCategoria());
 
             listaCategoriasResponse.add(listagemCategoriaProdutoDto);
         }
@@ -45,9 +50,9 @@ public class CategoriaService {
     @Transactional
     public MensagemResposta cadastraCategoria(CadastraCategoriaProdutoDto cadastraCategoriaProdutoDto) {
         //verifica se categoria ja esta cadastrada
-        validaCategoriaProdutoCadastrada(cadastraCategoriaProdutoDto.getNomeCategoriaProduto().toUpperCase());
+        validaCategoriaProdutoCadastrada(cadastraCategoriaProdutoDto.getNomeCategoria().toUpperCase());
         CategoriaEntity categoria = new CategoriaEntity();
-        categoria.setNomeCategoria(cadastraCategoriaProdutoDto.getNomeCategoriaProduto().toUpperCase());
+        categoria.setNomeCategoria(cadastraCategoriaProdutoDto.getNomeCategoria().toUpperCase());
 
         try {
             categoria.persist();
@@ -62,7 +67,7 @@ public class CategoriaService {
 
     private void validaCategoriaProdutoCadastrada(String nomeCategoriaProduto) {
         Optional<CategoriaEntity> categoriaProdutoEntity =
-                categoriaProdutoRepository.buscaCategoriaPeloNome(nomeCategoriaProduto);
+                categoriaRepository.buscaCategoriaPeloNome(nomeCategoriaProduto.replace(" ","" ));
 
         if(categoriaProdutoEntity.isPresent()) {
             throw new ErroCadastralException("Categoria já cadastrada");
@@ -72,14 +77,14 @@ public class CategoriaService {
 
     private CategoriaEntity buscaCategoriaPeloNome(String nomeCategoriaProduto) {
         Optional<CategoriaEntity> categoriaProdutoEntity =
-                categoriaProdutoRepository.buscaCategoriaPeloNome(nomeCategoriaProduto);
+                categoriaRepository.buscaCategoriaPeloNome(nomeCategoriaProduto);
 
         return categoriaProdutoEntity.orElseThrow(() -> new ErroCadastralException("Categoria Não Encontrada"));
     }
 
 
     public CategoriaEntity buscaCategoriaPeloId(Long idCategoria) {
-        Optional<CategoriaEntity> categoriaProdutoEntity = categoriaProdutoRepository.findByIdOptional(idCategoria);
+        Optional<CategoriaEntity> categoriaProdutoEntity = categoriaRepository.findByIdOptional(idCategoria);
 
         return categoriaProdutoEntity.orElseThrow(() -> new ErroCadastralException("Categoria não encontrada"));
     }
@@ -88,8 +93,8 @@ public class CategoriaService {
         CategoriaEntity categoriaProduto = buscaCategoriaPeloId(idCategoria);
 
         DetalhaCategoriaProdutoDto detalhaCategoriaProdutoDto = new DetalhaCategoriaProdutoDto();
-        detalhaCategoriaProdutoDto.setIdCategoriaProduto(categoriaProduto.getIdCategoria());
-        detalhaCategoriaProdutoDto.setNomeCategoriaProduto(categoriaProduto.getNomeCategoria());
+        detalhaCategoriaProdutoDto.setIdCategoria(categoriaProduto.getIdCategoria());
+        detalhaCategoriaProdutoDto.setNomeCategoria(categoriaProduto.getNomeCategoria());
 
         return detalhaCategoriaProdutoDto;
     }
@@ -98,8 +103,8 @@ public class CategoriaService {
         CategoriaEntity categoriaProduto = buscaCategoriaPeloNome(nomeCategoria.toUpperCase());
 
         DetalhaCategoriaProdutoDto detalhaCategoriaProdutoDto = new DetalhaCategoriaProdutoDto();
-        detalhaCategoriaProdutoDto.setIdCategoriaProduto(categoriaProduto.getIdCategoria());
-        detalhaCategoriaProdutoDto.setNomeCategoriaProduto(categoriaProduto.getNomeCategoria());
+        detalhaCategoriaProdutoDto.setIdCategoria(categoriaProduto.getIdCategoria());
+        detalhaCategoriaProdutoDto.setNomeCategoria(categoriaProduto.getNomeCategoria());
 
         return detalhaCategoriaProdutoDto;
     }
@@ -107,8 +112,9 @@ public class CategoriaService {
     @Transactional
     public MensagemResposta alteraDadosCategoria(Long idCategoria,
                                                  AlteraDadosCategoriaProdutoDto alteraDadosCategoriaProdutoDto) {
+        validaCategoriaProdutoCadastrada(alteraDadosCategoriaProdutoDto.getNomeCategoria().toUpperCase());
         CategoriaEntity categoriaEntity = buscaCategoriaPeloId(idCategoria);
-        categoriaEntity.setNomeCategoria(alteraDadosCategoriaProdutoDto.getNomeCategoriaProduto().toUpperCase());
+        categoriaEntity.setNomeCategoria(alteraDadosCategoriaProdutoDto.getNomeCategoria().toUpperCase());
 
         try {
             categoriaEntity.persistAndFlush();
@@ -121,4 +127,26 @@ public class CategoriaService {
                 "Categoria alterada com sucesso");
     }
 
+    @Transactional
+    public MensagemResposta deletaCategoria(Long idCategoria) {
+        verificaVinculoComProdutos(idCategoria);
+
+        try {
+            categoriaRepository.deleteById(idCategoria);
+        } catch (PersistenceException e) {
+            LOGGER.error(e);
+            throw new ErroCadastralException("Erro ao tentar excluir categoria");
+        }
+
+        return new MensagemResposta(1L,"Categoria excluida com sucesso");
+    }
+
+    private void verificaVinculoComProdutos(Long idCategoria) {
+        List<CategoriaProdutoEntity> produtos = produtoService.buscaProdutoPorIdCategoria(idCategoria);
+
+        System.out.println(produtos);
+        if (!produtos.isEmpty()) {
+            throw new ErroCadastralException("Categoria esta vinculada a produtos");
+        }
+    }
 }

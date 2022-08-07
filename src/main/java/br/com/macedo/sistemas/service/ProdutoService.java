@@ -2,10 +2,12 @@ package br.com.macedo.sistemas.service;
 
 import br.com.macedo.sistemas.domain.aggregate.CategoriaProdutoEntity;
 import br.com.macedo.sistemas.domain.aggregate.HistoricoPrecoEntity;
+import br.com.macedo.sistemas.domain.aggregate.ItemPedidoEntity;
 import br.com.macedo.sistemas.domain.aggregate.ProdutoEntity;
 import br.com.macedo.sistemas.domain.dto.AlteraDadosProdutoDto;
 import br.com.macedo.sistemas.domain.dto.CadastraProdutoDto;
 import br.com.macedo.sistemas.domain.dto.CategoriaProdutoDto;
+import br.com.macedo.sistemas.domain.dto.DetalhaCategoriaProdutoDto;
 import br.com.macedo.sistemas.domain.dto.ListaProdutoPorIdDto;
 import br.com.macedo.sistemas.domain.dto.ListagemHistoricoPrecoDto;
 import br.com.macedo.sistemas.domain.dto.ListagemProdutoDto;
@@ -20,8 +22,10 @@ import javax.inject.Inject;
 import javax.persistence.PersistenceException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @ApplicationScoped
 public class ProdutoService {
@@ -37,20 +41,29 @@ public class ProdutoService {
     @Inject
     CategoriaService categoriaService;
 
+    @Inject
+    CategoriaProdutoService categoriaProdutoService;
+
     public List<ListagemProdutoDto> listaProdutos() {
         List<ProdutoEntity> listaProdutos = ProdutoEntity.listAll();
+
         List<ListagemProdutoDto> listaProdutosResponse = new ArrayList<>();
         for(ProdutoEntity produto : listaProdutos) {
             ListagemProdutoDto listagemProdutoDto = new ListagemProdutoDto();
             listagemProdutoDto.setIdProduto(produto.getIdProduto());
             listagemProdutoDto.setNomeProduto(produto.getNomeProduto());
             listagemProdutoDto.setValorAtual(produto.getValorAtual());
-            listagemProdutoDto.setCategorias(produto.getCategoriasVinculadas());
 
             listaProdutosResponse.add(listagemProdutoDto);
         }
 
         return listaProdutosResponse;
+    }
+
+    public List<CategoriaProdutoEntity> buscaProdutoPorIdCategoria(Long idCategoria) {
+
+        return categoriaProdutoService.buscaProdutosPorIdCategoria(idCategoria);
+
     }
 
     @Transactional
@@ -140,9 +153,21 @@ public class ProdutoService {
         List<ListagemHistoricoPrecoDto> historicoPrecoEntity = buscaHistoricoAlteracaoPreco(idProduto);
 
         ListaProdutoPorIdDto listaProdutoPorIdDto = new ListaProdutoPorIdDto();
+        listaProdutoPorIdDto.setIdProduto(produtoEntity.getIdProduto());
         listaProdutoPorIdDto.setValorAtual(produtoEntity.getValorAtual());
         listaProdutoPorIdDto.setNomeProduto(produtoEntity.getNomeProduto());
         listaProdutoPorIdDto.setHistoricoPreco(historicoPrecoEntity);
+
+        Set<DetalhaCategoriaProdutoDto> categorias = new HashSet<>();
+        for (CategoriaProdutoEntity categoriaProdutoEntity: produtoEntity.getCategorias()){
+            DetalhaCategoriaProdutoDto detalhaCategoriaProdutoDto = new DetalhaCategoriaProdutoDto();
+            detalhaCategoriaProdutoDto.setIdCategoria(categoriaProdutoEntity.getCategoria().getIdCategoria());
+            detalhaCategoriaProdutoDto.setNomeCategoria(categoriaProdutoEntity.getCategoria().getNomeCategoria());
+
+            categorias.add(detalhaCategoriaProdutoDto);
+        }
+
+        listaProdutoPorIdDto.setCategorias(categorias);
 
         return listaProdutoPorIdDto;
 
