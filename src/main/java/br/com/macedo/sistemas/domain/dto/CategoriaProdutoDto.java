@@ -13,5 +13,5 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CategoriaProdutoDto implements Serializable {
-    private Long idCategoriaProduto;
+    private Long idCategoria;
 }

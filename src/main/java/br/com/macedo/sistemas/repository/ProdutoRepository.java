@@ -14,5 +14,7 @@ public class ProdutoRepository implements PanacheRepository<ProdutoEntity> {
         return find("nomeProduto", nomeProduto).firstResultOptional();
     }
 
-
+    public List<ProdutoEntity> listaProdutoPorStatus(String status) {
+        return find("statusProduto", status).list();
+    }
 }

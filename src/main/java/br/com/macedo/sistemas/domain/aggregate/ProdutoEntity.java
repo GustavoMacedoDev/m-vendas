@@ -1,5 +1,6 @@
 package br.com.macedo.sistemas.domain.aggregate;
 
+import br.com.macedo.sistemas.domain.enums.StatusProdutoEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import lombok.Getter;
@@ -7,6 +8,8 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,6 +39,9 @@ public class ProdutoEntity extends PanacheEntityBase implements Serializable {
 
     @Column(name = "valor_atual", nullable = false)
     private BigDecimal valorAtual;
+
+    @Enumerated(EnumType.ORDINAL)
+    private StatusProdutoEnum statusProduto;
 
     @JsonIgnore
     @OneToMany(mappedBy = "id.produto")

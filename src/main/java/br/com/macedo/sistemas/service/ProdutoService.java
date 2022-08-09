@@ -9,8 +9,10 @@ import br.com.macedo.sistemas.domain.dto.CadastraProdutoDto;
 import br.com.macedo.sistemas.domain.dto.CategoriaProdutoDto;
 import br.com.macedo.sistemas.domain.dto.DetalhaCategoriaProdutoDto;
 import br.com.macedo.sistemas.domain.dto.ListaProdutoPorIdDto;
+import br.com.macedo.sistemas.domain.dto.ListaProdutosPorCategoriaDto;
 import br.com.macedo.sistemas.domain.dto.ListagemHistoricoPrecoDto;
 import br.com.macedo.sistemas.domain.dto.ListagemProdutoDto;
+import br.com.macedo.sistemas.domain.enums.StatusProdutoEnum;
 import br.com.macedo.sistemas.domain.utils.exceptions.ErroCadastralException;
 import br.com.macedo.sistemas.domain.utils.mensagens.MensagemResposta;
 import br.com.macedo.sistemas.repository.ProdutoRepository;
@@ -53,6 +55,7 @@ public class ProdutoService {
             listagemProdutoDto.setIdProduto(produto.getIdProduto());
             listagemProdutoDto.setNomeProduto(produto.getNomeProduto());
             listagemProdutoDto.setValorAtual(produto.getValorAtual());
+            listagemProdutoDto.setStatus(produto.getStatusProduto());
 
             listaProdutosResponse.add(listagemProdutoDto);
         }
@@ -72,15 +75,16 @@ public class ProdutoService {
 
 
         ProdutoEntity produtoEntity = new ProdutoEntity();
-        produtoEntity.setNomeProduto(cadastraProdutoDto.getNomeProduto());
+        produtoEntity.setNomeProduto(cadastraProdutoDto.getNomeProduto().toUpperCase());
         produtoEntity.setValorAtual(cadastraProdutoDto.getValor());
+        //produtoEntity.setStatusProduto(StatusProdutoEnum.ATIVO.getCodigo());
 
 
         List<CategoriaProdutoEntity> listaCategorias = new ArrayList<>();
 
         for(CategoriaProdutoDto categoriaProduto : cadastraProdutoDto.getCategorias()) {
             CategoriaProdutoEntity categoriaProdutoEntity = new CategoriaProdutoEntity();
-            categoriaProdutoEntity.setCategoria(categoriaService.buscaCategoriaPeloId(categoriaProduto.getIdCategoriaProduto()));
+            categoriaProdutoEntity.setCategoria(categoriaService.buscaCategoriaPeloId(categoriaProduto.getIdCategoria()));
             categoriaProdutoEntity.setProduto(produtoEntity);
 
             listaCategorias.add(categoriaProdutoEntity);
@@ -187,6 +191,55 @@ public class ProdutoService {
         }
 
         return listagemHistoricoPrecoResponse;
+
+    }
+
+    @Transactional
+    public MensagemResposta inativaProduto(Long idProduto) {
+        ProdutoEntity produtoEntity = listaProdutoPorId(idProduto);
+        produtoEntity.setStatusProduto(StatusProdutoEnum.INATIVO);
+
+        try {
+            produtoEntity.persistAndFlush();
+        } catch (PersistenceException e) {
+            LOGGER.error(e);
+            throw new ErroCadastralException("Erro ao inativar produto");
+        }
+
+        return new MensagemResposta(produtoEntity.getIdProduto(), "Produto inativado com sucesso");
+    }
+
+    public List<ListaProdutosPorCategoriaDto> listaProdutosPorCategoria(Long idCategoria) {
+        List<CategoriaProdutoEntity> produtos = categoriaProdutoService.buscaProdutosPorIdCategoria(idCategoria);
+        List<ListaProdutosPorCategoriaDto> listaProdutosResponse = new ArrayList<>();
+
+        for(CategoriaProdutoEntity produto : produtos) {
+            ListaProdutosPorCategoriaDto listaProdutosPorCategoriaDto = new ListaProdutosPorCategoriaDto();
+            listaProdutosPorCategoriaDto.setNomeProduto(produto.getProduto().getNomeProduto());
+            listaProdutosPorCategoriaDto.setValorAtual(produto.getProduto().getValorAtual());
+            listaProdutosPorCategoriaDto.setStatusProduto(produto.getProduto().getStatusProduto());
+
+            listaProdutosResponse.add(listaProdutosPorCategoriaDto);
+        }
+
+        return listaProdutosResponse;
+
+    }
+
+    public List<ListagemProdutoDto> listaProdutosPorStatus(String status) {
+        List<ProdutoEntity> produtos = produtoRepository.listaProdutoPorStatus(status);
+
+        List<ListagemProdutoDto> listaProdutosResponse = new ArrayList<>();
+        for(ProdutoEntity produto : produtos) {
+            ListagemProdutoDto listagemProdutoDto = new ListagemProdutoDto();
+            listagemProdutoDto.setIdProduto(produto.getIdProduto());
+            listagemProdutoDto.setNomeProduto(produto.getNomeProduto());
+            listagemProdutoDto.setStatus(produto.getStatusProduto());
+
+            listaProdutosResponse.add(listagemProdutoDto);
+        }
+
+        return listaProdutosResponse;
 
     }
 }
